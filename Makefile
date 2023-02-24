@@ -10,30 +10,35 @@
 #                                                                              #
 # **************************************************************************** #
 
-NAME = minitalk
-SRCLIENT =   client.c
-OBJSCLIENT = $(SRCLIENT:.c=.o)
+CLIENT = client
+SERVER = server
+OBJS	= $(SRCS:.c=.o)
 
-SRCSERVER = server.c
-OBJSERVER = $(SRCSERVER:.c=.o)
+CC		= gcc
+CFLAGS	= -Wall -Werror -Wextra
 
-CFLAGS = -Wall -Wextra -Werror
-LIB = ./ft_printf/libftprintf.a 
+LIB =  ./ft_printf/libftprintf.a
 
-all: $(NAME)
+NAME	= minitalk
 
-$(NAME): $(OBJSERVER) $(OBJSCLIENT)
-	@make -C ./ft_printf
-	@gcc -o server $(SRCSERVER) $(CFLAGS) $(LIB)
-	@gcc -o client $(SRCLIENT) $(CFLAGS) $(LIB)
+all:	$(NAME)
+
+$(LIB):
+	make -C ./ft_printf
+
+$(SERVER):	 $(LIB ) server.c
+	$(CC) $(CFLAGS) $(LIB) server.c -o $(SERVER)
+
+$(CLIENT):	 $(LIB) client.c
+	$(CC) $(CFLAGS) $(LIB) client.c -o $(CLIENT)
+
+$(NAME): $(LIB) $(CLIENT) $(SERVER)
 
 clean:
-	rm -f $(OBJSERVER) $(OBJSCLIENT)
-	rm -f ./ft_printf/*.o
+	rm -f *.o
 
 fclean: clean
-	rm -f server client
-	rm -f ./ft_printf/*.o ./ft_printf/*.a
+	rm -f $(SERVER) $(CLIENT)
 
 re: fclean all
 
